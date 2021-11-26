@@ -13,7 +13,7 @@ const DAY = 2;
 // problem url  : https://adventofcode.com/2020/day/2
 
 async function p2020day2_part1(input: string, ...params: any[]) {
-	return 'Not implemented';
+  return 'Not implemented';
 }
 
 async function p2020day2_part2(input: string, ...params: any[]) {
