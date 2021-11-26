@@ -4,37 +4,20 @@ import * as test from "../../../util/test";
 import chalk from "chalk";
 import { log, logSolution, trace } from "../../../util/log";
 import { performance } from "perf_hooks";
-import { createDelete } from "typescript";
 
 const YEAR = 2020;
 const DAY = 25;
 
-// solution path: /Users/trevorsg/t-hugs/advent-of-code/years/2020/25/index.ts
-// data path    : /Users/trevorsg/t-hugs/advent-of-code/years/2020/25/data.txt
+// solution path: /Users/hank/projects/aoc/advent-of-code-1/years/2020/25/index.ts
+// data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2020/25/data.txt
 // problem url  : https://adventofcode.com/2020/day/25
 
-async function p2020day25_part1(input: string) {
-	const [card, door] = input.split("\n").map(Number);
+async function p2020day25_part1(input: string, ...params: any[]) {
+	return "Not implemented";
+}
 
-	const subject = 7;
-	const mod = 20201227;
-
-	let v = 1;
-	let cardLoop = 0;
-
-	for (let i = 0; ; ++i) {
-		v = util.mod(v * subject, mod);
-		if (v === card) {
-			cardLoop = i + 1;
-			break;
-		}
-	}
-
-	let key = 1;
-	for (let i = 0; i < cardLoop; ++i) {
-		key = util.mod(key * door, mod);
-	}
-	return key;
+async function p2020day25_part2(input: string, ...params: any[]) {
+	return "Not implemented";
 }
 
 async function run() {
@@ -43,10 +26,16 @@ async function run() {
 
 	// Run tests
 	test.beginTests();
-	test.beginSection();
-	for (const testCase of part1tests) {
-		test.logTestResult(testCase, String(await p2020day25_part1(testCase.input)));
-	}
+	await test.section(async () => {
+		for (const testCase of part1tests) {
+			test.logTestResult(testCase, String(await p2020day25_part1(testCase.input, ...(testCase.extraArgs || []))));
+		}
+	});
+	await test.section(async () => {
+		for (const testCase of part2tests) {
+			test.logTestResult(testCase, String(await p2020day25_part2(testCase.input, ...(testCase.extraArgs || []))));
+		}
+	});
 	test.endTests();
 
 	// Get input and run program while measuring performance
@@ -56,10 +45,15 @@ async function run() {
 	const part1Solution = String(await p2020day25_part1(input));
 	const part1After = performance.now();
 
-	logSolution(25, 2020, part1Solution);
+	const part2Before = performance.now()
+	const part2Solution = String(await p2020day25_part2(input));
+	const part2After = performance.now();
+
+	logSolution(25, 2020, part1Solution, part2Solution);
 
 	log(chalk.gray("--- Performance ---"));
 	log(chalk.gray(`Part 1: ${util.formatTime(part1After - part1Before)}`));
+	log(chalk.gray(`Part 2: ${util.formatTime(part2After - part2Before)}`));
 	log();
 }
 

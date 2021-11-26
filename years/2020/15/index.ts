@@ -8,72 +8,34 @@ import { performance } from "perf_hooks";
 const YEAR = 2020;
 const DAY = 15;
 
-// solution path: /Users/trevorsg/t-hugs/advent-of-code/years/2020/15/index.ts
-// data path    : /Users/trevorsg/t-hugs/advent-of-code/years/2020/15/data.txt
+// solution path: /Users/hank/projects/aoc/advent-of-code-1/years/2020/15/index.ts
+// data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2020/15/data.txt
 // problem url  : https://adventofcode.com/2020/day/15
 
-function getLastSpoken(nums: number[], iterations: number) {
-	const mem: number[][] = new Array(iterations);
-	let i = 0;
-	for (const num of nums) {
-		mem[num] = [i++];
-	}
-
-	let mostRecentlySpoken = nums[nums.length - 1];
-	for (; i < iterations; ++i) {
-		const memLast = mem[mostRecentlySpoken];
-		if (memLast.length === 1) {
-			mem[0][1] = mem[0][0];
-			mem[0][0] = i;
-			mostRecentlySpoken = 0;
-		} else {
-			mostRecentlySpoken = memLast[0] - memLast[1];
-			const memNextToSpeak = mem[mostRecentlySpoken];
-			if (memNextToSpeak) {
-				memNextToSpeak[1] = memNextToSpeak[0];
-				memNextToSpeak[0] = i;
-			} else {
-				mem[mostRecentlySpoken] = [i];
-			}
-		}
-	}
-	return mostRecentlySpoken;
+async function p2020day15_part1(input: string, ...params: any[]) {
+	return "Not implemented";
 }
 
-async function p2020day15_part1(input: string) {
-	const nums = input.split(",").map(Number);
-	return getLastSpoken(nums, 2020);
-}
-
-async function p2020day15_part2(input: string) {
-	const nums = input.split(",").map(Number);
-	return getLastSpoken(nums, 30_000_000);
+async function p2020day15_part2(input: string, ...params: any[]) {
+	return "Not implemented";
 }
 
 async function run() {
-	const part1tests: TestCase[] = [
-		{
-			input: `0,3,6`,
-			expected: `436`,
-		},
-	];
-	const part2tests: TestCase[] = [
-		{
-			input: `0,3,6`,
-			expected: `175594`,
-		},
-	];
+	const part1tests: TestCase[] = [];
+	const part2tests: TestCase[] = [];
 
 	// Run tests
 	test.beginTests();
-	test.beginSection();
-	for (const testCase of part1tests) {
-		test.logTestResult(testCase, String(await p2020day15_part1(testCase.input)));
-	}
-	test.beginSection();
-	for (const testCase of part2tests) {
-		test.logTestResult(testCase, String(await p2020day15_part2(testCase.input)));
-	}
+	await test.section(async () => {
+		for (const testCase of part1tests) {
+			test.logTestResult(testCase, String(await p2020day15_part1(testCase.input, ...(testCase.extraArgs || []))));
+		}
+	});
+	await test.section(async () => {
+		for (const testCase of part2tests) {
+			test.logTestResult(testCase, String(await p2020day15_part2(testCase.input, ...(testCase.extraArgs || []))));
+		}
+	});
 	test.endTests();
 
 	// Get input and run program while measuring performance
@@ -83,7 +45,7 @@ async function run() {
 	const part1Solution = String(await p2020day15_part1(input));
 	const part1After = performance.now();
 
-	const part2Before = performance.now();
+	const part2Before = performance.now()
 	const part2Solution = String(await p2020day15_part2(input));
 	const part2After = performance.now();
 
