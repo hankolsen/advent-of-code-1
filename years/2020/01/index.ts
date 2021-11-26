@@ -4,6 +4,8 @@ import * as test from "../../../util/test";
 import chalk from "chalk";
 import { log, logSolution, trace } from "../../../util/log";
 import { performance } from "perf_hooks";
+import { getProduct, getTrippleProducts } from "./product";
+import { getNumberRows } from "../../../util/input";
 
 const YEAR = 2020;
 const DAY = 1;
@@ -13,16 +15,16 @@ const DAY = 1;
 // problem url  : https://adventofcode.com/2020/day/1
 
 async function p2020day1_part1(input: string, ...params: any[]) {
-	return "Not implemented";
+	return getProduct(getNumberRows(input));
 }
 
 async function p2020day1_part2(input: string, ...params: any[]) {
-	return "Not implemented";
+	return getTrippleProducts(getNumberRows(input));
 }
 
 async function run() {
-	const part1tests: TestCase[] = [];
-	const part2tests: TestCase[] = [];
+	const part1tests: TestCase[] = [{ input: "1721\n979\n366\n299\n675\n1456", expected: '514579' }];
+	const part2tests: TestCase[] = [{ input: "1721\n979\n366\n299\n675\n1456", expected: '241861950' }];
 
 	// Run tests
 	test.beginTests();
@@ -45,7 +47,7 @@ async function run() {
 	const part1Solution = String(await p2020day1_part1(input));
 	const part1After = performance.now();
 
-	const part2Before = performance.now()
+	const part2Before = performance.now();
 	const part2Solution = String(await p2020day1_part2(input));
 	const part2After = performance.now();
 
