@@ -4,6 +4,8 @@ import * as test from '../../../util/test';
 import chalk from 'chalk';
 import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
+import { getRows } from '../../../util/input';
+import { validatePasswords, validatePasswords2 } from './passwords';
 
 const YEAR = 2020;
 const DAY = 2;
@@ -13,16 +15,34 @@ const DAY = 2;
 // problem url  : https://adventofcode.com/2020/day/2
 
 async function p2020day2_part1(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return validatePasswords(getRows(input));
 }
 
 async function p2020day2_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return validatePasswords2(getRows(input));
 }
 
 async function run() {
-  const part1tests: TestCase[] = [];
-  const part2tests: TestCase[] = [];
+  const part1tests: TestCase[] = [
+    {
+      input: `
+        1-3 a: abcde
+        1-3 b: cdefg
+        2-9 c: ccccccccc
+      `,
+      expected: '2',
+    },
+  ];
+  const part2tests: TestCase[] = [
+    {
+      input: `
+        1-3 a: abcde
+        1-3 b: cdefg
+        2-9 c: ccccccccc
+      `,
+      expected: '1',
+    },
+  ];
 
   // Run tests
   test.beginTests();
