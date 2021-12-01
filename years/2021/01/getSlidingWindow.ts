@@ -11,6 +11,6 @@ const getSlidingWindow = (input: number[]) => {
     }
     
     return { previous: sum, count };
-  }, { previous: 0, count: -1 })?.count;
+  }, { previous: 0, count: -1 }).count;
 };
 export default getSlidingWindow;
