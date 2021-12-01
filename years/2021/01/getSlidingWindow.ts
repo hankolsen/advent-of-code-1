@@ -5,12 +5,11 @@ const getSlidingWindow = (input: number[]) => {
     }
     
     const sum = row + arr[index + 1] + arr[index + 2];
-    if (index == 0) {
-      return { previous: sum, count: 0 };
-    }
+    
     if (sum > previous) {
       return { previous: sum, count: count + 1 };
     }
+    
     return { previous: sum, count };
   }, { previous: 0, count: -1 })?.count;
 };
