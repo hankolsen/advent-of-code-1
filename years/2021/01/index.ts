@@ -3,8 +3,9 @@ import * as test from '../../../util/test';
 import chalk from 'chalk';
 import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
-import { getNumberRows } from '../../../util/input';
+import { getNumberRows, getRows } from '../../../util/input';
 import getLargerCount from './getLargerCount';
+import getSlidingWindow from './getSlidingWindow';
 
 const YEAR = 2021;
 const DAY = 1;
@@ -18,7 +19,7 @@ async function p2021day1_part1(input: string, ...params: any[]) {
 }
 
 async function p2021day1_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return getSlidingWindow(getNumberRows(input));
 }
 
 async function run() {
@@ -39,7 +40,21 @@ async function run() {
       expected: '7',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    { input: `
+        199
+        200
+        208
+        210
+        200
+        207
+        240
+        269
+        260
+        263
+      `,
+      expected: '5'}
+  ];
 
   // Run tests
   test.beginTests();
