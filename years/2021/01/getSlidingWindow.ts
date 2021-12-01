@@ -1,5 +1,5 @@
-const getSlidingWindow = (input: number[]) => {
-  return input.reduce(({ previous, count }, row, index, arr) => {
+const getSlidingWindow = (rows: number[]) => {
+  return rows.reduce(({ previous, count }, row, index, arr) => {
     if (index >= arr.length - 2) {
       return { previous, count };
     }
@@ -13,4 +13,5 @@ const getSlidingWindow = (input: number[]) => {
     return { previous: sum, count };
   }, { previous: 0, count: -1 }).count;
 };
+
 export default getSlidingWindow;
