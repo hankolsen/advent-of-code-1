@@ -6,6 +6,7 @@ import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
 import { getRows } from '../../../util/input';
 import { dir } from 'console';
+import { diveFirst, diveSecond } from './dive';
 
 const YEAR = 2021;
 const DAY = 2;
@@ -14,47 +15,27 @@ const DAY = 2;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2021/02/data.txt
 // problem url  : https://adventofcode.com/2021/day/2
 
+const parseRow = (row: string) => {
+  const [, dir, val] = row.match(/(forward|up|down) (\d+)/) ?? [];
+  return { dir, val: Number(val) };
+};
+type Props = {
+  x: number;
+  y: number;
+  val: number;
+};
+type Props2 = {
+  x: number;
+  y: number;
+  aim: number;
+  val: number;
+};
 async function p2021day2_part1(input: string, ...params: any[]) {
-  const { x, y } = getRows(input).reduce(
-    ({ x, y }, row) => {
-      const [, direction, val] = row.match(/(forward|up|down) (\d+)/) ?? [];
-      if (direction === 'forward') {
-        x += Number(val);
-      }
-      if (direction === 'up') {
-        y -= Number(val);
-      }
-      if (direction === 'down') {
-        y += Number(val);
-      }
-      return { x, y };
-    },
-    { x: 0, y: 0 },
-  );
-
-  return x * y;
+  return diveFirst(getRows(input));
 }
 
 async function p2021day2_part2(input: string, ...params: any[]) {
-  const { x, y } = getRows(input).reduce(
-    ({ x, y, aim }, row) => {
-      const [, direction, val] = row.match(/(forward|up|down) (\d+)/) ?? [];
-      if (direction === 'forward') {
-        x += Number(val);
-        y += aim * Number(val);
-      }
-      if (direction === 'up') {
-        aim -= Number(val);
-      }
-      if (direction === 'down') {
-        aim += Number(val);
-      }
-      return { x, y, aim };
-    },
-    { x: 0, y: 0, aim: 0 },
-  );
-
-  return x * y;;
+  return diveSecond(getRows(input));
 }
 
 async function run() {
