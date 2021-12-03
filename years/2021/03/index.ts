@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { parseInt } from 'lodash';
 import * as util from '../../../util/util';
 import * as test from '../../../util/test';
 import chalk from 'chalk';
@@ -21,8 +21,46 @@ async function p2021day3_part1(input: string, ...params: any[]) {
   return gamma * epsilon;
 }
 
+const checkColumn = (rows: string[], col: number) => {
+  return rows.reduce((acc, row) => {
+    const cellValue = Number(row.trim().split('')[col]);
+    acc[cellValue] += 1;
+    return acc;
+  }, [0, 0]);
+};
+
 async function p2021day3_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const rows = getRows(input).map((row) => row.trim());
+  let oxygen = [...rows];
+  let co2 = [...rows];
+  
+  for (let col = 0; col < oxygen[0].length; col += 1) {
+    const [low, high] = checkColumn(oxygen, col);
+    if (low > high) {
+      oxygen = oxygen.filter((row) => Number(row.split('')[col]) === 0);
+    } else {
+      oxygen = oxygen.filter((row) => Number(row.split('')[col]) === 1);
+    }
+    if (oxygen.length === 1) {
+      break;
+    }
+  }
+  
+  for (let col = 0; col < co2[0].length; col += 1) {
+    const [low, high] = checkColumn(co2, col);
+    if (low <= high) {
+      co2 = co2.filter((row) => Number(row.split('')[col]) === 0);
+    } else {
+      co2 = co2.filter((row) => Number(row.split('')[col]) === 1);
+    }
+    if (co2.length === 1) {
+      break;
+    }
+  }
+  
+  const o = parseInt(oxygen.join(''), 2);
+  const c = parseInt(co2.join(''), 2);
+  return c * o;
 }
 
 async function run() {
@@ -45,7 +83,25 @@ async function run() {
       expected: '198',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `
+        00100
+        11110
+        10110
+        10111
+        10101
+        01111
+        00111
+        11100
+        10000
+        11001
+        00010
+        01010
+      `,
+      expected: '230',
+    },
+  ];
   
   // Run tests
   test.beginTests();
