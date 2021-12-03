@@ -4,6 +4,7 @@ import * as test from '../../../util/test';
 import chalk from 'chalk';
 import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
+import { getRows } from '../../../util/input';
 
 const YEAR = 2021;
 const DAY = 3;
@@ -13,7 +14,27 @@ const DAY = 3;
 // problem url  : https://adventofcode.com/2021/day/3
 
 async function p2021day3_part1(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const arr = getRows(input).map((row) => row.trim().split(''));
+  const acc: number[][] = [];
+  for (let col = 0;  col < arr[0].length; col += 1) {
+    acc.push([0, 0]);
+    arr.forEach((row) => {
+      acc[col][Number(row[col])] += 1;
+    })
+  }
+  const { g, e } = acc.reduce(({ g, e}, entry) => {
+    if (entry[0] >  entry[1]) {
+      g.push('0');
+      e.push('1');
+    } else {
+      g.push('1');
+      e.push('0');
+    }
+    return { g, e }
+  }, {g: [''], e: ['']});
+  const gamma = parseInt(g.join(''), 2);
+  const epsilson = parseInt(e.join(''), 2);
+  return gamma * epsilson;
 }
 
 async function p2021day3_part2(input: string, ...params: any[]) {
@@ -21,7 +42,25 @@ async function p2021day3_part2(input: string, ...params: any[]) {
 }
 
 async function run() {
-  const part1tests: TestCase[] = [];
+  const part1tests: TestCase[] = [
+    {
+      input: `
+        00100
+        11110
+        10110
+        10111
+        10101
+        01111
+        00111
+        11100
+        10000
+        11001
+        00010
+        01010
+      `,
+      expected: '198'
+    }
+  ];
   const part2tests: TestCase[] = [];
 
   // Run tests
