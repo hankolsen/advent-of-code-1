@@ -5,6 +5,8 @@ import chalk from 'chalk';
 import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
 import { getRows } from '../../../util/input';
+import getMostAndLeastCommonBits from './getMostAndLeastCommonBits';
+import getGammaAndEpsilon from './getGammaAndEpsilon';
 
 const YEAR = 2021;
 const DAY = 3;
@@ -14,26 +16,8 @@ const DAY = 3;
 // problem url  : https://adventofcode.com/2021/day/3
 
 async function p2021day3_part1(input: string, ...params: any[]) {
-  const arr = getRows(input).map((row) => row.trim().split(''));
-  const acc: number[][] = [];
-  for (let col = 0;  col < arr[0].length; col += 1) {
-    acc.push([0, 0]);
-    arr.forEach((row) => {
-      acc[col][Number(row[col])] += 1;
-    })
-  }
-  const { g, e } = acc.reduce(({ g, e}, entry) => {
-    if (entry[0] >  entry[1]) {
-      g.push('0');
-      e.push('1');
-    } else {
-      g.push('1');
-      e.push('0');
-    }
-    return { g, e }
-  }, {g: [''], e: ['']});
-  const gamma = parseInt(g.join(''), 2);
-  const epsilson = parseInt(e.join(''), 2);
+  const acc: number[][] = getMostAndLeastCommonBits(getRows((input)));
+  const { gamma, epsilson } = getGammaAndEpsilon(acc);
   return gamma * epsilson;
 }
 
@@ -58,38 +42,38 @@ async function run() {
         00010
         01010
       `,
-      expected: '198'
-    }
+      expected: '198',
+    },
   ];
   const part2tests: TestCase[] = [];
-
+  
   // Run tests
   test.beginTests();
   await test.section(async () => {
     for (const testCase of part1tests) {
-	    test.logTestResult(testCase, String(await p2021day3_part1(testCase.input, ...(testCase.extraArgs || []))));
-	  }
+      test.logTestResult(testCase, String(await p2021day3_part1(testCase.input, ...(testCase.extraArgs || []))));
+    }
   });
   await test.section(async () => {
     for (const testCase of part2tests) {
-		  test.logTestResult(testCase, String(await p2021day3_part2(testCase.input, ...(testCase.extraArgs || []))));
-	  }
+      test.logTestResult(testCase, String(await p2021day3_part2(testCase.input, ...(testCase.extraArgs || []))));
+    }
   });
   test.endTests();
-
+  
   // Get input and run program while measuring performance
   const input = await util.getInput(DAY, YEAR);
-
+  
   const part1Before = performance.now();
   const part1Solution = String(await p2021day3_part1(input));
   const part1After = performance.now();
-
+  
   const part2Before = performance.now();
   const part2Solution = String(await p2021day3_part2(input));
   const part2After = performance.now();
-
+  
   logSolution(3, 2021, part1Solution, part2Solution);
-
+  
   log(chalk.gray('--- Performance ---'));
   log(chalk.gray(`Part 1: ${util.formatTime(part1After - part1Before)}`));
   log(chalk.gray(`Part 2: ${util.formatTime(part2After - part2Before)}`));
