@@ -16,9 +16,9 @@ const DAY = 3;
 // problem url  : https://adventofcode.com/2021/day/3
 
 async function p2021day3_part1(input: string, ...params: any[]) {
-  const acc: number[][] = getMostAndLeastCommonBits(getRows((input)));
-  const { gamma, epsilson } = getGammaAndEpsilon(acc);
-  return gamma * epsilson;
+  const acc = getMostAndLeastCommonBits(getRows((input)));
+  const { gamma, epsilon } = getGammaAndEpsilon(acc);
+  return gamma * epsilon;
 }
 
 async function p2021day3_part2(input: string, ...params: any[]) {

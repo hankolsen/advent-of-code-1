@@ -7,7 +7,13 @@ const getMostAndLeastCommonBits = (rows: string[]) => {
       acc[col][cellValue] += 1;
     });
   }
-  return acc;
+  return acc.map((e) => {
+    const max = Math.max(...e);
+    const min = Math.min(...e);
+    const most = e.findIndex((e) => e === max);
+    const least = e.findIndex((e) => e === min);
+    return { least, most }
+  });
 };
 
 export default getMostAndLeastCommonBits;

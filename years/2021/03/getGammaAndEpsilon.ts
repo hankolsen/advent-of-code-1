@@ -1,13 +1,12 @@
-const getGammaAndEpsilon = (acc: number[][]) => {
-  const { g, e } = acc.reduce(({ g, e }, entry) => {
-    const max = Math.max(...entry);
-    const min = Math.min(...entry);
-    e.push(entry.findIndex((e) => e === max).toString());
-    g.push(entry.findIndex((e) => e === min).toString());
-    return { g, e };
-  }, { g: [''], e: [''] });
+const getGammaAndEpsilon = (acc: { least: number, most: number }[]) => {
+  const { e, g } = acc.reduce(({ e, g }, { least, most }) => {
+    e.push(most.toString());
+    g.push(least.toString());
+    return { e, g };
+  }, { e: [''], g: [''] });
+  
+  const epsilon = parseInt(e.join(''), 2);
   const gamma = parseInt(g.join(''), 2);
-  const epsilson = parseInt(e.join(''), 2);
-  return { gamma, epsilson };
+  return { epsilon, gamma };
 };
 export default getGammaAndEpsilon;
