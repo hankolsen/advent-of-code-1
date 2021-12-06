@@ -4,6 +4,7 @@ import * as test from '../../../util/test';
 import chalk from 'chalk';
 import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
+import { getRows } from '../../../util/input';
 
 const YEAR = 2021;
 const DAY = 6;
@@ -13,7 +14,19 @@ const DAY = 6;
 // problem url  : https://adventofcode.com/2021/day/6
 
 async function p2021day6_part1(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const fishes = getRows(input)[0].split(',').map(Number);
+  for (let step = 1; step <= 80; step += 1) {
+    const state = [...fishes];
+    state.forEach((fish, i) => {
+      if (fish === 0) {
+        fishes[i] = 6;
+        fishes.push(8);
+        return;
+      }
+      fishes[i] = fish - 1;
+    });
+  }
+  return fishes.length;
 }
 
 async function p2021day6_part2(input: string, ...params: any[]) {
@@ -21,7 +34,12 @@ async function p2021day6_part2(input: string, ...params: any[]) {
 }
 
 async function run() {
-  const part1tests: TestCase[] = [];
+  const part1tests: TestCase[] = [
+    {
+      input: `3,4,3,1,2`,
+      expected: '5934'
+    }
+  ];
   const part2tests: TestCase[] = [];
 
   // Run tests
