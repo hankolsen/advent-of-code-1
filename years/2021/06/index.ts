@@ -13,24 +13,25 @@ const DAY = 6;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2021/06/data.txt
 // problem url  : https://adventofcode.com/2021/day/6
 
-async function p2021day6_part1(input: string, ...params: any[]) {
-  const fishes = getRows(input)[0].split(',').map(Number);
-  for (let step = 1; step <= 80; step += 1) {
-    const state = [...fishes];
-    state.forEach((fish, i) => {
-      if (fish === 0) {
-        fishes[i] = 6;
-        fishes.push(8);
-        return;
-      }
-      fishes[i] = fish - 1;
-    });
+const simulate = (input: string, steps: number) => {
+  const fishes = new Array(9).fill(0);
+  input.split(',').map(Number).forEach((fish) => {
+    fishes[fish] += 1;
+  })
+  for (let step = 1; step <= steps; step += 1) {
+    const babies = fishes.shift();
+    fishes[6] += babies;
+    fishes.push(babies);
   }
-  return fishes.length;
+  return fishes.reduce((acc, fish) => acc + fish, 0);
+}
+
+async function p2021day6_part1(input: string, ...params: any[]) {
+  return simulate(input, 80);
 }
 
 async function p2021day6_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return simulate(input, 256);
 }
 
 async function run() {
@@ -40,7 +41,10 @@ async function run() {
       expected: '5934'
     }
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [{
+    input: `3,4,3,1,2`,
+    expected: '26984457539'
+  }];
 
   // Run tests
   test.beginTests();
