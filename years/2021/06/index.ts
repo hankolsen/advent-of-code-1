@@ -15,14 +15,15 @@ const DAY = 6;
 
 const simulate = (input: string, steps: number) => {
   const fishes = new Array(9).fill(0);
-  input.split(',').map(Number).forEach((fish) => {
-    fishes[fish] += 1;
-  })
-  for (let step = 1; step <= steps; step += 1) {
+  input.split(',').forEach((fish) => {
+    fishes[Number(fish)] += 1;
+  });
+  [...Array(steps)].forEach(() => {
     const babies = fishes.shift();
     fishes[6] += babies;
     fishes.push(babies);
-  }
+  })
+  
   return fishes.reduce((acc, fish) => acc + fish, 0);
 }
 
