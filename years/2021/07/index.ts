@@ -24,7 +24,16 @@ async function p2021day7_part1(input: string, ...params: any[]) {
 }
 
 async function p2021day7_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const crabs = input.split(',').map(Number);
+  const min = Math.min(...crabs);
+  const max = Math.max(...crabs);
+  const sum = (n: number) => (n * (n + 1)) / 2;
+  const positions = Array(max - min + 1).fill(0);
+  const fuelCosts = positions
+    .map((_, i) => crabs
+      .map((crab) => sum(Math.abs(crab - i)))
+      .reduce((a, b) => a + b, 0));
+  return Math.min(...fuelCosts);
 }
 
 async function run() {
