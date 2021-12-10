@@ -47,7 +47,45 @@ async function p2021day10_part1(input: string, ...params: any[]) {
 }
 
 async function p2021day10_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const rows = getRows(input).reduce((acc: string[][], row, i) => {
+    const tags: string[] = [];
+    row.split('').every((c, j) => {
+      if (openingTags.includes(c)) {
+        tags.push(c);
+      } else {
+        const closingTagIndex = closingTags.findIndex((tag) => tag === c);
+        const openingTag = tags.pop();
+        const openingTagIndex = openingTags.findIndex((tag) => tag === openingTag);
+        if (closingTagIndex !== openingTagIndex) {
+          return false;
+        }
+      }
+      if (j === row.length - 1) {
+        acc.push(tags);
+      }
+      return true;
+    });
+    return acc;
+  }, []);
+  const tagsPoints: { [key: string]: number } = {
+    ')': 1,
+    ']': 2,
+    '}': 3,
+    '>': 4,
+  };
+  const sums = rows.reduce((sums: number[], tags) => {
+    const sum = tags.reverse().reduce((acc: number, tag) => {
+      const openingTagIndex = openingTags.findIndex((t) => t === tag);
+      const closingTag = closingTags[openingTagIndex];
+      const points = tagsPoints[closingTag];
+      acc = acc * 5 + points;
+      return acc;
+    }, 0);
+    sums.push(sum);
+    return sums
+  }, []);
+  const sortedSums = sums.sort((a, b) => a - b);
+  return sortedSums[Math.floor(sortedSums.length / 2)]
 }
 
 async function run() {
@@ -68,7 +106,23 @@ async function run() {
       expected: '26397',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `
+[({(<(())[]>[[{[]{<()<>>
+[(()[<>])]({[<{<<[]>>(
+{([(<{}[<>[]}>{[]{[(<()>
+(((({<>}<{<{<>}{[]{[]{}
+[[<[([]))<([[{}[[()]]]
+[{[{({}]{}}([{[{{{}}([]
+{<[[]]>}<{[{[{[]{()[[[]
+[<(<(<(<{}))><([]([]()
+<{([([[(<>()){}]>(<<{{
+<{([{{}}[<[[[<>{}]]]>[]]
+`,
+      expected: '288957',
+    },
+  ];
   
   // Run tests
   test.beginTests();
