@@ -14,7 +14,7 @@ const DAY = 9;
 // problem url  : https://adventofcode.com/2021/day/9
 
 type Props = { cell: number, col: number, row: number, rows: number, cols: number, grid: { [key: string]: number } };
-const isLowPoint = ({ cell, col, row, rows, cols, grid, }: Props) => {
+const isLowPoint = ({ cell, col, row, rows, cols, grid }: Props) => {
   return [{ dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }].every(({ dx, dy }) => {
     const x = col + dx;
     const y = row + dy;
@@ -50,12 +50,39 @@ const getLowPoints = ((input: string) => {
   return lowPoints;
 });
 
+const isBasin = ({ grid, x, y, cols, rows, tree }: { x: number, y: number, cols: number, rows: number, grid: { [key: string]: number }, tree: { [key: string]: number } }) => {
+  if (!tree[`${x},${y}`]) {
+    tree[`${x},${y}`] = 1;
+  }
+  [{ dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }].forEach(({ dx, dy }) => {
+    const cell = grid[`${x},${y}`];
+    const nextCol = x + dx;
+    const nextRow = y + dy;
+    const nextCell = grid[`${nextCol},${nextRow}`];
+    if (nextCol < 0 || nextCol >= cols || nextRow < 0 || nextRow >= rows || nextCell < cell || nextCell === 9 || tree[`${nextCol},${nextRow}`]) {
+      return;
+    }
+    isBasin({ grid, x:nextCol, y: nextRow, cols, rows, tree });
+  });
+  return tree;
+};
+
 async function p2021day9_part1(input: string, ...params: any[]) {
-  return getLowPoints(input).reduce((acc, { cell }) => acc + cell + 1, 0)
+  return getLowPoints(input).reduce((acc, { cell }) => acc + cell + 1, 0);
 }
 
 async function p2021day9_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const data = getRows(input);
+  const grid = createGrid(data);
+  const rows = data.length;
+  const cols = data[0].length;
+  const res = getLowPoints(input).map(({ x, y }) => {
+    const tree: { [key: string]: number } = {};
+    isBasin({ grid, x, y, cols, rows, tree });
+    return Object.keys(tree).length;
+  });
+  const m = res.sort((a,b) => b - a).slice(0, 3).reduce((acc, a) => acc * a);
+  return m;
 }
 
 async function run() {
