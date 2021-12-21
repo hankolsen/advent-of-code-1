@@ -1,9 +1,9 @@
-import _ from 'lodash';
 import * as util from '../../../util/util';
 import * as test from '../../../util/test';
 import chalk from 'chalk';
-import { log, logSolution, trace } from '../../../util/log';
+import { log, logSolution } from '../../../util/log';
 import { performance } from 'perf_hooks';
+import { getRows } from '../../../util/input';
 
 const YEAR = 2021;
 const DAY = 21;
@@ -12,8 +12,35 @@ const DAY = 21;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2021/21/data.txt
 // problem url  : https://adventofcode.com/2021/day/21
 
+const parseInput = (input: string) => getRows(input).map((row) => row.match(/\d/g) ?? []).map((row) => row.map(Number));
+const move = (startingPos: number, steps: number) => (startingPos + steps - 1) % 10 + 1;
+let timesRolled: number;
+const rollDie = () => Array(3).fill(1).reduce((dice) => {
+  timesRolled += 1;
+  dice += ((timesRolled - 1) % 100) + 1;
+  return dice;
+}, 0);
+
 async function p2021day21_part1(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const [[, player1StartingPos], [, player2StartingPos]] = parseInput(input);
+  let players = [{ pos: player1StartingPos, points: 0 }, { pos: player2StartingPos, points: 0 }];
+  let maxPoint = 0;
+  timesRolled = 0;
+  while (maxPoint < 1000) {
+    for (const player of [0, 1]) {
+      let { pos, points } = players[player];
+      pos = move(pos, rollDie());
+      points += pos;
+      players[player] = { pos, points };
+      if (points >= 1000) {
+        break;
+      }
+    }
+    maxPoint = Math.max(...players.map(({ points }) => points));
+  }
+
+  const loser = players.find(({ points }) => points < 1000);
+  return loser!.points * timesRolled;
 }
 
 async function p2021day21_part2(input: string, ...params: any[]) {
@@ -21,20 +48,28 @@ async function p2021day21_part2(input: string, ...params: any[]) {
 }
 
 async function run() {
-  const part1tests: TestCase[] = [];
+  const part1tests: TestCase[] = [
+    {
+      input: `
+Player 1 starting position: 4
+Player 2 starting position: 8
+`,
+      expected: '739785',
+    },
+  ];
   const part2tests: TestCase[] = [];
 
   // Run tests
   test.beginTests();
   await test.section(async () => {
     for (const testCase of part1tests) {
-	    test.logTestResult(testCase, String(await p2021day21_part1(testCase.input, ...(testCase.extraArgs || []))));
-	  }
+      test.logTestResult(testCase, String(await p2021day21_part1(testCase.input, ...(testCase.extraArgs || []))));
+    }
   });
   await test.section(async () => {
     for (const testCase of part2tests) {
-		  test.logTestResult(testCase, String(await p2021day21_part2(testCase.input, ...(testCase.extraArgs || []))));
-	  }
+      test.logTestResult(testCase, String(await p2021day21_part2(testCase.input, ...(testCase.extraArgs || []))));
+    }
   });
   test.endTests();
 
