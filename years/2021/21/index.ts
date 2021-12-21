@@ -12,7 +12,9 @@ const DAY = 21;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2021/21/data.txt
 // problem url  : https://adventofcode.com/2021/day/21
 
-const parseInput = (input: string) => getRows(input).map((row) => row.match(/\d/g) ?? []).map((row) => row.map(Number));
+const parseInput = (input: string) => getRows(input).map((row) => row.match(/\d$/g) ?? []).map((pos) => {
+  return { pos: Number(pos), points: 0 }
+});
 const move = (startingPos: number, steps: number) => (startingPos + steps - 1) % 10 + 1;
 let timesRolled: number;
 const rollDie = () => Array(3).fill(1).reduce((dice) => {
@@ -22,21 +24,20 @@ const rollDie = () => Array(3).fill(1).reduce((dice) => {
 }, 0);
 
 async function p2021day21_part1(input: string, ...params: any[]) {
-  const [[, player1StartingPos], [, player2StartingPos]] = parseInput(input);
-  let players = [{ pos: player1StartingPos, points: 0 }, { pos: player2StartingPos, points: 0 }];
-  let maxPoint = 0;
+  const players = parseInput(input);
+  let found = false;
   timesRolled = 0;
-  while (maxPoint < 1000) {
+  while (!found) {
     for (const player of [0, 1]) {
       let { pos, points } = players[player];
       pos = move(pos, rollDie());
       points += pos;
       players[player] = { pos, points };
       if (points >= 1000) {
+        found = true;
         break;
       }
     }
-    maxPoint = Math.max(...players.map(({ points }) => points));
   }
 
   const loser = players.find(({ points }) => points < 1000);
