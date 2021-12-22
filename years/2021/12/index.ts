@@ -46,7 +46,35 @@ async function p2021day12_part1(input: string, ...params: any[]) {
 }
 
 async function p2021day12_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const paths = parseInput(input);
+  const foundPaths = [];
+  const findPath = (pos: string, current: string[]) => {
+    if (pos === 'start' && current.length) {
+      return;
+    }
+
+    if (pos === 'end') {
+      foundPaths.push([...current, pos]);
+      return;
+    }
+    const next = [...current, pos];
+    const counts: { [key: string]: number } = {};
+    for (const p of next) {
+      if (p.toLowerCase() === p) {
+        counts[p] = (counts[p] ?? 0) + 1
+      }
+    }
+    const hasBeenInSmall = Object.values(counts).some((v) => v > 1);
+    // @ts-ignore
+    for (const direction of paths.get(pos)) {
+      if (!hasBeenInSmall || direction.toLowerCase() !== direction || !current.includes(direction)) {
+        findPath(direction, next);
+      }
+    }
+  };
+
+  findPath('start', []);
+  return foundPaths.length;
 }
 
 async function run() {
@@ -102,7 +130,58 @@ start-RW
       expected: '226'
     }
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `
+start-A
+start-b
+A-c
+A-b
+b-d
+A-end
+b-end
+`,
+      expected: '36'
+    },
+    {
+      input: `
+dc-end
+HN-start
+start-kj
+dc-start
+dc-HN
+LN-dc
+HN-end
+kj-sa
+kj-HN
+kj-dc
+`,
+      expected: '103'
+    },
+    {
+      input: `
+fs-end
+he-DX
+fs-he
+start-DX
+pj-DX
+end-zg
+zg-sl
+zg-pj
+pj-he
+RW-he
+fs-DX
+pj-RW
+zg-RW
+start-pj
+he-WI
+zg-he
+pj-fs
+start-RW
+`,
+      expected: '3509'
+    }
+  ];
 
   // Run tests
   test.beginTests();

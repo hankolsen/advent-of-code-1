@@ -1,7 +1,7 @@
 export const getCaloriesList = (input: number[]) => {
-	const caloriesList: number[] = [];
-	
-	input.reduce((acc: number, cal: number, index: number) => {
+  const caloriesList: number[] = [];
+
+  input.reduce((acc: number, cal: number, index: number) => {
     if (index === input.length - 1) {
       acc += cal;
       caloriesList.push(acc);
@@ -13,8 +13,8 @@ export const getCaloriesList = (input: number[]) => {
     }
     return acc;
   }, 0);
-  
-	caloriesList.sort((a, b) => b - a);
 
-	return caloriesList;
+  caloriesList.sort((a, b) => b - a);
+
+  return caloriesList;
 };
