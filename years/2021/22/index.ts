@@ -16,13 +16,19 @@ const parseInput = (input: string) => {
   return getRows(input).map((row) => {
     const [, setting, x1, x2, y1, y2, z1, z2] = row.match(/(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)/) ?? [];
     return {
-      setting: setting === 'on', x1: Number(x1), x2: Number(x2), y1: Number(y1), y2: Number(y2), z1: Number(z1), z2: Number(z2),
+      setting: setting === 'on',
+      x1: Number(x1),
+      x2: Number(x2),
+      y1: Number(y1),
+      y2: Number(y2),
+      z1: Number(z1),
+      z2: Number(z2),
     };
   });
 };
 
 const k = (x: number, y: number, z: number) => `${x},${y},${z}`;
-const isWithinLimits = (numbers: number[], limit: number) => numbers.every((n) => Math.abs(n) <= limit)
+const isWithinLimits = (numbers: number[], limit: number) => numbers.every((n) => Math.abs(n) <= limit);
 
 async function p2021day22_part1(input: string, ...params: any[]) {
   const instructions = parseInput(input);
