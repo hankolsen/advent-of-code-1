@@ -1,3 +1,4 @@
+import { getCaloriesList } from './getCaloriesList';
 import { getNumberRows } from './../../../util/input';
 import _ from 'lodash';
 import * as util from '../../../util/util';
@@ -14,38 +15,15 @@ const DAY = 1;
 // problem url  : https://adventofcode.com/2022/day/1
 
 async function p2022day1_part1(input: string, ...params: any[]) {
-  const data = getNumberRows(input);
-  let max = 0;
-  data.reduce((acc: number, cal: number) => {
-    if (cal === 0) {
-      max = Math.max(acc, max);
-      acc = 0;
-    } else {
-      acc += cal;
-    }
-    return acc;
-  }, 0);
-  return max;
+  const caloriesList: number[] = getCaloriesList(getNumberRows(input));
+
+  return caloriesList[0];
 }
 
 async function p2022day1_part2(input: string, ...params: any[]) {
-  const calList: number[] = [];
-  const data = getNumberRows(input);
-  data.reduce((acc: number, cal: number, index: number) => {
-    if (index === data.length - 1) {
-      acc += cal;
-      calList.push(acc);
-    } else if (cal === 0) {
-      calList.push(acc);
-      acc = 0;
-    } else {
-      acc += cal;
-    }
-    return acc;
-  }, 0);
-  calList.sort((a, b) => b - a);
-  const result = calList[0] + calList[1] + calList[2];
-  return result;
+  const caloriesList: number[] = getCaloriesList(getNumberRows(input));
+
+  return caloriesList[0] + caloriesList[1] + caloriesList[2];
 }
 
 async function run() {
