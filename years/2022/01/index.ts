@@ -29,7 +29,23 @@ async function p2022day1_part1(input: string, ...params: any[]) {
 }
 
 async function p2022day1_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const calList: number[] = [];
+  const data = getNumberRows(input);
+  data.reduce((acc: number, cal: number, index: number) => {
+    if (index === data.length - 1) {
+      acc += cal;
+      calList.push(acc);
+    } else if (cal === 0) {
+      calList.push(acc);
+      acc = 0;
+    } else {
+      acc += cal;
+    }
+    return acc;
+  }, 0);
+  calList.sort((a, b) => b - a);
+  const result = calList[0] + calList[1] + calList[2];
+  return result;
 }
 
 async function run() {
@@ -54,7 +70,27 @@ async function run() {
       expected: '24000',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `
+      1000
+      2000
+      3000
+      
+      4000
+      
+      5000
+      6000
+      
+      7000
+      8000
+      9000
+      
+      10000
+    `,
+      expected: '45000',
+    }
+  ];
 
   // Run tests
   test.beginTests();
