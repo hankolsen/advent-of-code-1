@@ -37,7 +37,27 @@ async function p2022day3_part1(input: string, ...params: any[]) {
 }
 
 async function p2022day3_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const rows = getRowsAsArrays(input);
+
+  let group: string[][] = [];
+  const groups = rows.reduce((acc: string[][][], row, i) => {
+    group.push(row);
+    if ((i + 1) % 3 === 0) {
+      acc.push(group);
+      group = [];
+    }
+    return acc;
+  }, []);
+
+  return groups.reduce((acc, group) => {
+    group[0].some((letter) => {
+      if (group[1].includes(letter) && group[2].includes(letter)) {
+        acc += getCharacterValue(letter);
+        return true;
+      }
+    });
+    return acc;
+  }, 0);
 }
 
 async function run() {
@@ -52,7 +72,17 @@ CrZsJsPPZsGzwwsLwLmpwMDw`,
       expected: '157',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw`,
+      expected: '70',
+    },
+  ];
 
   // Run tests
   test.beginTests();
