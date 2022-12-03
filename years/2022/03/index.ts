@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import * as util from '../../../util/util';
-import * as test from '../../../util/test';
 import chalk from 'chalk';
-import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
-import { getRows, getRowsAsArrays } from '../../../util/input';
+import { log, logSolution } from '../../../util/log';
+import * as test from '../../../util/test';
+import * as util from '../../../util/util';
+import { findDuplicateValues } from './findDuplicateValues';
+import { findGroupDuplicateValues } from './findGroupDuplicateValues';
 
 const YEAR = 2022;
 const DAY = 3;
@@ -13,51 +13,12 @@ const DAY = 3;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2022/03/data.txt
 // problem url  : https://adventofcode.com/2022/day/3
 
-const getCharacterValue = (character: string) => {
-  let diff = 38;
-  if (character.match(/[a-z]/)) {
-    diff = 96;
-  }
-  return character.charCodeAt(0) - diff;
-};
 async function p2022day3_part1(input: string, ...params: any[]) {
-  const rows = getRowsAsArrays(input);
-
-  return rows.reduce((acc, row) => {
-    const size = row.length;
-    const [first, second] = [row.slice(0, size / 2), row.slice(size / 2)];
-    first.some((letter) => {
-      if (second.includes(letter)) {
-        acc += getCharacterValue(letter);
-        return true;
-      }
-    });
-    return acc;
-  }, 0);
+  return findDuplicateValues(input);
 }
 
 async function p2022day3_part2(input: string, ...params: any[]) {
-  const rows = getRowsAsArrays(input);
-
-  let group: string[][] = [];
-  const groups = rows.reduce((acc: string[][][], row, i) => {
-    group.push(row);
-    if ((i + 1) % 3 === 0) {
-      acc.push(group);
-      group = [];
-    }
-    return acc;
-  }, []);
-
-  return groups.reduce((acc, group) => {
-    group[0].some((letter) => {
-      if (group[1].includes(letter) && group[2].includes(letter)) {
-        acc += getCharacterValue(letter);
-        return true;
-      }
-    });
-    return acc;
-  }, 0);
+  return findGroupDuplicateValues(input);
 }
 
 async function run() {
