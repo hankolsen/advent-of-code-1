@@ -18,7 +18,7 @@ async function p2022day3_part1(input: string, ...params: any[]) {
 }
 
 async function p2022day3_part2(input: string, ...params: any[]) {
-  return findGroupDuplicateValues(input);
+  return findGroupDuplicateValues(input, 3);
 }
 
 async function run() {
