@@ -25,7 +25,16 @@ async function p2022day4_part1(input: string, ...params: any[]) {
 }
 
 async function p2022day4_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const rows = getRows(input);
+  return rows.reduce((acc, row) => {
+    const [, startA, endA, startB, endB] = (row.match(/(\d+)-(\d+),(\d+)-(\d+)/) ?? []).map(Number);
+    const start = Math.max(startA, startB);
+    const end = Math.min(endA, endB);
+    if (start <= end) {
+      acc += 1;
+    }
+    return acc;
+  }, 0);
 }
 
 async function run() {
@@ -41,7 +50,18 @@ async function run() {
       expected: '2',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `
+      2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8`,
+      expected: '4',
+    },
+  ];
 
   // Run tests
   test.beginTests();
