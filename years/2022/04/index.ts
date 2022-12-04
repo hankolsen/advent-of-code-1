@@ -13,10 +13,15 @@ const DAY = 4;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2022/04/data.txt
 // problem url  : https://adventofcode.com/2022/day/4
 
+const getPairs = (row: string) => {
+  const [, startA, endA, startB, endB] = (row.match(/(\d+)-(\d+),(\d+)-(\d+)/) ?? []).map(Number);
+  return [startA, endA, startB, endB];
+}
+
 async function p2022day4_part1(input: string, ...params: any[]) {
   const rows = getRows(input);
   return rows.reduce((acc, row) => {
-    const [, startA, endA, startB, endB] = (row.match(/(\d+)-(\d+),(\d+)-(\d+)/) ?? []).map(Number);
+    const [startA, endA, startB, endB] = getPairs(row);
     if ((startA <= startB && endA >= endB) || (startB <= startA && endB >= endA)) {
       acc += 1;
     }
@@ -27,7 +32,7 @@ async function p2022day4_part1(input: string, ...params: any[]) {
 async function p2022day4_part2(input: string, ...params: any[]) {
   const rows = getRows(input);
   return rows.reduce((acc, row) => {
-    const [, startA, endA, startB, endB] = (row.match(/(\d+)-(\d+),(\d+)-(\d+)/) ?? []).map(Number);
+    const [startA, endA, startB, endB] = getPairs(row);
     const start = Math.max(startA, startB);
     const end = Math.min(endA, endB);
     if (start <= end) {
