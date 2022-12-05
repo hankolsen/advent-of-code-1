@@ -11,26 +11,24 @@ const DAY = 5;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2022/05/data.txt
 // problem url  : https://adventofcode.com/2022/day/5
 
+type Crates = Record<number, string[]>;
+
 const getCratesAndInstructions = (input: string) => {
   const [stacks, procedure] = input.split('\n\n').map((r) => r.split('\n'));
-  let crates: Record<number, string[]> = {};
   
-  stacks.forEach((line) => {
-    const [, ...columns] = line.split( /(.{4})/);
-    const row = columns.reduce((acc: string[], column) => {
-      if (column) {
-        acc.push(column);
+  const crates = stacks.reduce((acc: Crates, line) => {
+    let index = 0;
+    const row = line.split('');
+    while (row.length) {
+      const crate = row.splice(0, 4).join('').trim();
+      if (crate) {
+        const [, content] = crate.match(/\[(\w)]/) ?? [];
+        acc[index] = acc[index] ? [...acc[index], content] : [content];
       }
-      return acc;
-    }, []);
-    
-    row.forEach((crate, i) => {
-      const [, content] = crate.match(/\[(\w)]/) ?? [];
-      if (content) {
-        crates[i] = crates[i] ? [...crates[i], content] : [content];
-      }
-    });
-  });
+      index += 1;
+    }
+    return acc;
+  }, {});
   
   const instructions = procedure.slice(0, procedure.length - 1).map((move) => {
     const [, count, from , to] = move.match(/move (\d+) from (\d+) to (\d+)/) ?? [];
@@ -40,7 +38,7 @@ const getCratesAndInstructions = (input: string) => {
   return { crates, instructions };
 };
 
-const getTopCrates = (crates: Record<number, string[]>) => {
+const getTopCrates = (crates: Crates) => {
   return Object.values(crates).reduce((acc, col) => {
     if (col[0]) {
       acc += col[0];
