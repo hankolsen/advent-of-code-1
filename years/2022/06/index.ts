@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { log, logSolution } from '../../../util/log';
 import { performance } from 'perf_hooks';
 import { getRow } from '../../../util/input';
+import { findUniqueWord } from './findUniqueWord';
 
 const YEAR = 2022;
 const DAY = 6;
@@ -14,14 +15,12 @@ const DAY = 6;
 
 async function p2022day6_part1(input: string, ...params: any[]) {
   const data = getRow(input);
-  const result = data.match(/(\w)(?!\1)(\w)(?!\1|\2)(\w)(?!\1|\2|\3)(\w)(?!\1|\2|\3|\4)/) ?? [];
-  return result.index! + 4;
+  return findUniqueWord(data, 4);
 }
 
 async function p2022day6_part2(input: string, ...params: any[]) {
   const data = getRow(input);
-  const result = data.match(/(\w)(?!\1)(\w)(?!\1|\2)(\w)(?!\1|\2|\3)(\w)(?!\1|\2|\3|\4)(\w)(?!\1|\2|\3|\4|\5)(\w)(?!\1|\2|\3|\4|\5|\6)(\w)(?!\1|\2|\3|\4|\5|\6|\7)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8|\9)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8|\9|\10)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8|\9|\10|\11)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8|\9|\10|\11|\12)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8|\9|\10|\11|\12|\13)(\w)(?!\1|\2|\3|\4|\5|\6|\7|\8|\9|\10|\11|\12|\13|\14)/) ?? [];
-  return result.index! + 14;
+  return findUniqueWord(data, 14);
 }
 
 async function run() {
