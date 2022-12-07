@@ -37,13 +37,14 @@ const getSizes = (input: string) => {
         cwd = cd(arg, cwd);
       }
     } else {
-      if (!fileSystem[cwd.join('/')]) {
-        fileSystem[cwd.join('/')] = {};
+      const location = cwd.join('/');
+      if (!fileSystem[location]) {
+        fileSystem[location] = {};
       }
       if (dir) {
-        fileSystem[cwd.join('/')][dir] = 'dir';
+        fileSystem[location][dir] = 'dir';
       } else {
-        fileSystem[cwd.join('/')][file] = Number(size);
+        fileSystem[location][file] = Number(size);
       }
     }
   });
@@ -64,13 +65,13 @@ const getSizes = (input: string) => {
 };
 
 async function p2022day7_part1(input: string, ...params: any[]) {
-  return Object.entries(getSizes(input)).filter(x => x[1] <= 100_000).reduce((acc, [name, size]) => acc + size, 0);
+  return Object.entries(getSizes(input)).filter(([, size]) => size <= 100_000).reduce((acc, [, size]) => acc + size, 0);
 }
 
 async function p2022day7_part2(input: string, ...params: any[]) {
   const sizes = getSizes(input);
   const toFree = 30_000_000 - (70_000_000 - sizes['/']);
-  const sortedSizes = Object.entries(sizes).filter(x => x[1] >= toFree).sort(([a, aSize], [b, bSize]) => aSize - bSize);
+  const sortedSizes = Object.entries(sizes).filter(([, size]) => size >= toFree).sort(([, aSize], [, bSize]) => aSize - bSize);
   return sortedSizes[0][1];
 }
 
