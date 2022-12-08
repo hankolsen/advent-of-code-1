@@ -13,64 +13,78 @@ const DAY = 8;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2022/08/data.txt
 // problem url  : https://adventofcode.com/2022/day/8
 
+const getForest = (input: string) => {
+  const data = getRows(input);
+  const height = data.length;
+  const width = data[0].length;
+  const rows = data.map((row) => row.split('').map(Number));
+  const columns = rows[0].map((col, i) => rows.map((x) => x[i]));
+  return { rows, columns, height, width, forest: data };
+};
+
 async function p2022day8_part1(input: string, ...params: any[]) {
-  const rows = getRows(input);
-  const height = rows.length;
-  const width = rows[0].length;
-  const visible: Record<string, boolean> = {};
+  const { rows, columns, height, width, forest } = getForest(input);
   
-  const forest: Record<string, number> = {};
-  rows.map((row, y) => {
-    row.split('').map((tree, x) => {
-      forest[`${y}-${x}`] = Number(tree);
+  const isLower = (val: number) => {
+    return (tree: number) => tree < val;
+  };
+  
+  return rows.reduce((acc, row, y) => {
+    columns.forEach((col, x) => {
+      if (x === 0 || y === 0 || x === width - 1 || y === height - 1) {
+        return acc += 1;
+      }
+      
+      const tree = Number(forest[y][x]);
+      const isVisible = [
+        rows[y].slice(0, x).every(isLower(tree)),
+        rows[y].slice(x + 1).every(isLower(tree)),
+        columns[x].slice(0, y).every(isLower(tree)),
+        columns[x].slice(y + 1).every(isLower(tree)),
+      ].some(x => x);
+      acc += isVisible ? 1 : 0;
     });
-  });
-  
-  for (let x = 1; x < width - 1; x += 1) {
-    // From top
-    let topMin = forest[`0-${x}`];
-    for (let y = 1; y < height - 1; y += 1) {
-      if (forest[`${y}-${x}`] > topMin) {
-        visible[`${y}-${x}`] = true;
-        topMin = forest[`${y}-${x}`];
-      }
-    }
     
-    // From bottom
-    let bottomMin = forest[`${height - 1}-${x}`];
-    for (let y = height - 2; y > 0; y -= 1) {
-      if (forest[`${y}-${x}`] > bottomMin) {
-        visible[`${y}-${x}`] = true;
-        bottomMin = forest[`${y}-${x}`];
-      }
-    }
-  }
-  
-  for (let y = 1; y < height - 1; y += 1) {
-    // From left
-    let leftMin = forest[`${y}-0`];
-    for (let x = 1; x < width - 1; x += 1) {
-      if (forest[`${y}-${x}`] > leftMin) {
-        visible[`${y}-${x}`] = true;
-        leftMin = forest[`${y}-${x}`];
-      }
-    }
-    
-    // From right
-    let rightMin = forest[`${y}-${width - 1}`];
-    for (let x = width - 2; x > 0; x -= 1) {
-      if (forest[`${y}-${x}`] > rightMin) {
-        visible[`${y}-${x}`] = true;
-        rightMin = forest[`${y}-${x}`];
-      }
-    }
-  }
-  
-  return Object.entries(visible).length + 2 * height + 2 * width - 4;
+    return acc;
+  }, 0)
 }
 
 async function p2022day8_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const { rows, columns, height, width, forest } = getForest(input);
+  
+  const findNumberOfLower = (val: number) => {
+    return (acc: number, tree: number, i: number, arr: number[]) => {
+      acc += 1;
+      if (tree >= val) {
+        arr.splice(1);
+      }
+      return acc;
+    };
+  };
+  
+  return rows.reduce((max, row, y) => {
+    columns.forEach((col, x) => {
+      if (x === 0 || y === 0 || x === width - 1 || y === height - 1) {
+        return max;
+      }
+      
+      const tree = Number(forest[y][x]);
+      
+      const visibleProduct = [
+        rows[y].slice(0, x).reverse().reduce(findNumberOfLower(tree), 0),
+        rows[y].slice(x + 1).reduce(findNumberOfLower(tree), 0),
+        columns[x].slice(0, y).reverse().reduce(findNumberOfLower(tree), 0),
+        columns[x].slice(y + 1).reduce(findNumberOfLower(tree), 0),
+      ].reduce((acc, count) => {
+        acc *= count;
+        return acc;
+      }, 1);
+      
+      max = Math.max(max, visibleProduct);
+    });
+    return max;
+  }, -1);
+  
 }
 
 async function run() {
@@ -84,7 +98,16 @@ async function run() {
       expected: '21',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `30373
+25512
+65332
+33549
+35390`,
+      expected: '8',
+    },
+  ];
   
   // Run tests
   test.beginTests();
