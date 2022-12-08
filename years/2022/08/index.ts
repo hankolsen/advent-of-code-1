@@ -17,55 +17,51 @@ async function p2022day8_part1(input: string, ...params: any[]) {
   const rows = getRows(input);
   const height = rows.length;
   const width = rows[0].length;
-  const visible: Record<string, boolean> = {}
+  const visible: Record<string, boolean> = {};
   
   const forest: Record<string, number> = {};
   rows.map((row, y) => {
     row.split('').map((tree, x) => {
       forest[`${y}-${x}`] = Number(tree);
-    })
+    });
   });
   
-  // From top
   for (let x = 1; x < width - 1; x += 1) {
-    let xMin = forest[`0-${x}`];
+    // From top
+    let topMin = forest[`0-${x}`];
     for (let y = 1; y < height - 1; y += 1) {
-      if (forest[`${y}-${x}`] > xMin) {
+      if (forest[`${y}-${x}`] > topMin) {
         visible[`${y}-${x}`] = true;
-        xMin = forest[`${y}-${x}`];
+        topMin = forest[`${y}-${x}`];
       }
     }
-  }
-  
-  // From bottom
-  for (let x = 1; x < width - 1; x += 1) {
-    let xMin = forest[`${height - 1}-${x}`];
+    
+    // From bottom
+    let bottomMin = forest[`${height - 1}-${x}`];
     for (let y = height - 2; y > 0; y -= 1) {
-      if (forest[`${y}-${x}`] > xMin) {
+      if (forest[`${y}-${x}`] > bottomMin) {
         visible[`${y}-${x}`] = true;
-        xMin = forest[`${y}-${x}`];
+        bottomMin = forest[`${y}-${x}`];
       }
     }
   }
   
-  // From left
   for (let y = 1; y < height - 1; y += 1) {
-    let yMin = forest[`${y}-0`];
+    // From left
+    let leftMin = forest[`${y}-0`];
     for (let x = 1; x < width - 1; x += 1) {
-      if (forest[`${y}-${x}`] > yMin) {
+      if (forest[`${y}-${x}`] > leftMin) {
         visible[`${y}-${x}`] = true;
-        yMin = forest[`${y}-${x}`];
+        leftMin = forest[`${y}-${x}`];
       }
     }
-  }
-  
-  // From right
-  for (let y = 1; y < height - 1; y += 1) {
-    let yMin = forest[`${y}-${width - 1}`];
+    
+    // From right
+    let rightMin = forest[`${y}-${width - 1}`];
     for (let x = width - 2; x > 0; x -= 1) {
-      if (forest[`${y}-${x}`] > yMin) {
+      if (forest[`${y}-${x}`] > rightMin) {
         visible[`${y}-${x}`] = true;
-        yMin = forest[`${y}-${x}`];
+        rightMin = forest[`${y}-${x}`];
       }
     }
   }
@@ -85,38 +81,38 @@ async function run() {
 65332
 33549
 35390`,
-      expected: '21'
-    }
+      expected: '21',
+    },
   ];
   const part2tests: TestCase[] = [];
-
+  
   // Run tests
   test.beginTests();
   await test.section(async () => {
     for (const testCase of part1tests) {
-	    test.logTestResult(testCase, String(await p2022day8_part1(testCase.input, ...(testCase.extraArgs || []))));
-	  }
+      test.logTestResult(testCase, String(await p2022day8_part1(testCase.input, ...(testCase.extraArgs || []))));
+    }
   });
   await test.section(async () => {
     for (const testCase of part2tests) {
-		  test.logTestResult(testCase, String(await p2022day8_part2(testCase.input, ...(testCase.extraArgs || []))));
-	  }
+      test.logTestResult(testCase, String(await p2022day8_part2(testCase.input, ...(testCase.extraArgs || []))));
+    }
   });
   test.endTests();
-
+  
   // Get input and run program while measuring performance
   const input = await util.getInput(DAY, YEAR);
-
+  
   const part1Before = performance.now();
   const part1Solution = String(await p2022day8_part1(input));
   const part1After = performance.now();
-
+  
   const part2Before = performance.now();
   const part2Solution = String(await p2022day8_part2(input));
   const part2After = performance.now();
-
+  
   logSolution(8, 2022, part1Solution, part2Solution);
-
+  
   log(chalk.gray('--- Performance ---'));
   log(chalk.gray(`Part 1: ${util.formatTime(part1After - part1Before)}`));
   log(chalk.gray(`Part 2: ${util.formatTime(part2After - part2Before)}`));
