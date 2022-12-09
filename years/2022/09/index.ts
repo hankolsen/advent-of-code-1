@@ -24,9 +24,9 @@ async function p2022day9_part1(input: string, ...params: any[]) {
   
   const visited = new Set();
   visited.add('0,0');
-  
-  let head: Coordinate = [0, 0];
-  let tail: Coordinate = [0, 0];
+  const snake: Coordinate[] = [[0, 0], [0, 0]];
+  let head = snake[0];
+  let tail = snake[snake.length - 1];
   
   const moves: Record<string, (c: Coordinate) => Coordinate> = {
     U: ([x, y]: Coordinate) => [x, y - 1],
@@ -35,39 +35,21 @@ async function p2022day9_part1(input: string, ...params: any[]) {
     L: ([x, y]: Coordinate) => [x - 1, y],
   };
   
+  const tailMoves: Record<string, string[]> = {
+    '+,+': ['R', 'D'],
+    '+,-': ['R', 'U'],
+    '-,+': ['L', 'D'],
+    '-,-': ['L', 'U'],
+    '0,+': ['D'],
+    '0,-': ['U'],
+    '+,0': ['R'],
+    '-,0': ['L'],
+  };
+  
   const moveTail = () => {
-    let dirs: string[] = [];
-    if (head[0] - tail[0] !== 0 && head[1] - tail[1] !== 0) {
-      if (head[0] - tail[0] > 0) {
-        dirs.push('R');
-      } else {
-        dirs.push('L');
-      }
-      
-      if (head[1] - tail[1] > 0) {
-        dirs.push('D');
-      } else {
-        dirs.push('U');
-      }
-    }
-    
-    if (head[0] - tail[0] === 0) {
-      if (head[1] - tail[1] > 0) {
-        dirs = ['D'];
-      } else {
-        dirs = ['U'];
-      }
-    }
-    
-    if (head[1] - tail[1] === 0) {
-      if (head[0] - tail[0] > 0) {
-        dirs = ['R'];
-      } else {
-        dirs = ['L'];
-      }
-    }
-    
-    return dirs;
+    const xDiff = head[0] - tail[0] === 0 ? '0' : head[0] > tail[0] ? '+' : '-';
+    const yDiff = head[1] - tail[1] === 0 ? '0' : head[1] > tail[1] ? '+' : '-';
+    return tailMoves[`${xDiff},${yDiff}`];
   };
   
   const moveHead = (dir: string, steps: number) => {
@@ -78,7 +60,7 @@ async function p2022day9_part1(input: string, ...params: any[]) {
         const tailMoves = moveTail();
         tailMoves.forEach((dir: string) => {
           tail = moves[dir](tail);
-        })
+        });
         visited.add(`${tail[0]},${tail[1]}`);
       }
     }
