@@ -13,27 +13,32 @@ const DAY = 10;
 // data path    : /Users/hank/projects/aoc/advent-of-code-1/years/2022/10/data.txt
 // problem url  : https://adventofcode.com/2022/day/10
 
-async function p2022day10_part1(input: string, ...params: any[]) {
+const start = (input: string, tick: (x: number) => void) => {
   const rows = getRows(input);
-  let cycle = 0;
   let x = 1;
+  
+  rows.forEach((row) => {
+    const [instruction, value] = row.split(' ');
+    tick(x);
+    if (instruction === 'addx') {
+      tick(x);
+      x += Number(value);
+    }
+  });
+};
+
+async function p2022day10_part1(input: string, ...params: any[]) {
+  let cycle = 0;
   let values: Record<number, number> = {};
   
-  const tick = () => {
+  const tick = (x: number) => {
     cycle += 1;
     if (cycle === 20 || ((cycle - 20) % 40 === 0)) {
       values[cycle] = x;
     }
   };
   
-  rows.forEach((row) => {
-    const [instruction, value] = row.split(' ');
-    tick();
-    if (instruction === 'addx') {
-      tick();
-      x += Number(value);
-    }
-  });
+  start(input, tick);
   
   return Object.entries(values).reduce((prod, [key, value]) => {
     prod += Number(key) * value;
@@ -42,28 +47,20 @@ async function p2022day10_part1(input: string, ...params: any[]) {
 }
 
 async function p2022day10_part2(input: string, ...params: any[]) {
-  const rows = getRows(input);
   let cycle = 0;
-  let x = 1;
   let pixels: string[] = [];
   
-  const pixelIsTouchingSprite = () => {
+  const pixelIsTouchingSprite = (x: number) => {
     const pos = (cycle - 1) % 40;
     return x === pos || x - 1 === pos || x + 1 === pos ? '#' : '.';
   };
-  const tick = () => {
+  
+  const tick = (x: number) => {
     cycle += 1;
-    pixels[cycle] = pixelIsTouchingSprite();
+    pixels[cycle] = pixelIsTouchingSprite(x);
   };
   
-  rows.forEach((row) => {
-    const [instruction, value] = row.split(' ');
-    tick();
-    if (instruction === 'addx') {
-      tick();
-      x += Number(value);
-    }
-  });
+  start(input, tick);
   
   let row: string[] = [];
   pixels.forEach((pixel, i) => {
