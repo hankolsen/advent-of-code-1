@@ -49,11 +49,11 @@ async function p2022day10_part2(input: string, ...params: any[]) {
   
   const pixelIsTouchingSprite = () => {
     const pos = (cycle - 1) % 40;
-    return x === pos || x - 1 === pos || x + 1 === pos;
+    return x === pos || x - 1 === pos || x + 1 === pos ? '#' : '.';
   };
   const tick = () => {
     cycle += 1;
-    pixels[cycle] = pixelIsTouchingSprite() ? '#' : '.';
+    pixels[cycle] = pixelIsTouchingSprite();
   };
   
   rows.forEach((row) => {
@@ -72,7 +72,9 @@ async function p2022day10_part2(input: string, ...params: any[]) {
       console.log(row.join(''));
       row = [];
     }
-  })
+  });
+  
+  return pixels.join('');
 }
 
 async function run() {
@@ -375,7 +377,7 @@ addx -11
 noop
 noop
 noop`,
-      expected: '13140',
+      expected: '##..##..##..##..##..##..##..##..##..##..###...###...###...###...###...###...###.####....####....####....####....####....#####.....#####.....#####.....#####.....######......######......######......###########.......#######.......#######.....',
     },
   ];
   
