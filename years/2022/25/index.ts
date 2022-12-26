@@ -26,6 +26,24 @@ const snafuToDec = (row: string) => row.split('').reverse().reduce((acc, entry, 
   return acc;
 }, 0);
 
+const decToSnafu = (sum: number) => {
+  let snafu = '';
+  while (sum !== 0) {
+    const remainder = sum % 5;
+    if (remainder < 3) {
+      snafu = `${remainder}${snafu}`;
+    } else if (remainder === 3) {
+      snafu = `=${snafu}`;
+      sum += 5;
+    } else if (remainder === 4) {
+      snafu = `-${snafu}`;
+      sum += 5;
+    }
+    sum = Math.floor(sum / 5);
+  }
+  return snafu;
+};
+
 async function p2022day25_part1(input: string, ...params: any[]) {
   const rows = getRows(input);
   const decimal = rows.reduce((sum, row) => {
@@ -33,7 +51,7 @@ async function p2022day25_part1(input: string, ...params: any[]) {
     return sum;
   }, 0);
   
-  return decimal;
+  return decToSnafu(decimal);
 }
 
 async function p2022day25_part2(input: string, ...params: any[]) {
@@ -56,7 +74,7 @@ async function run() {
 12
 1=
 122`,
-      expected: '4890',
+      expected: '2=-1=0',
     },
   ];
   const part2tests: TestCase[] = [];
