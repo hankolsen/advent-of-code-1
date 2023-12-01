@@ -6,6 +6,7 @@ import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
 import { getRows } from '../../../util/input';
 import { getSum } from './getSum';
+import { getTextOrNumberSum } from './getTextOrNumberSum';
 
 const YEAR = 2023;
 const DAY = 1;
@@ -19,7 +20,7 @@ async function p2023day1_part1(input: string, ...params: any[]) {
 }
 
 async function p2023day1_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return getTextOrNumberSum(getRows(input));
 }
 
 async function run() {
@@ -32,7 +33,19 @@ async function run() {
     `,
     expected: '142',
   }];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [{
+    input: `
+    two1nine
+    eightwothree
+    abcone2threexyz
+    xtwone3four
+    4nineeightseven2
+    zoneight234
+    7pqrstsixteen
+    `,
+    expected: '281',
+  }
+  ];
 
   // Run tests
   test.beginTests();
