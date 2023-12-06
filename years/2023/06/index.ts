@@ -6,6 +6,7 @@ import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
 import { getRows } from '../../../util/input';
 import { findBoatMoves } from './findBoatMoves';
+import { findBoatMove } from './findBoatMove';
 
 const YEAR = 2023;
 const DAY = 6;
@@ -19,7 +20,7 @@ async function p2023day6_part1(input: string, ...params: any[]) {
 }
 
 async function p2023day6_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return findBoatMove(getRows(input));
 }
 
 async function run() {
@@ -30,7 +31,13 @@ Distance:  9  40  200`,
       expected: '288',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `Time:      7  15   30
+Distance:  9  40  200`,
+      expected: '71503',
+    },
+  ];
 
   // Run tests
   test.beginTests();
