@@ -6,6 +6,7 @@ import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
 import { getRows } from '../../../util/input';
 import { part1 } from './part1';
+import { part2 } from './part2';
 
 const YEAR = 2023;
 const DAY = 8;
@@ -19,7 +20,7 @@ async function p2023day8_part1(input: string, ...params: any[]) {
 }
 
 async function p2023day8_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  return part2(getRows(input));
 }
 
 async function run() {
@@ -45,7 +46,21 @@ ZZZ = (ZZZ, ZZZ)`,
       expected: '6',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)`,
+      expected: '6',
+    },
+  ];
 
   // Run tests
   test.beginTests();
