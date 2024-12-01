@@ -9,13 +9,9 @@ import { performance } from 'perf_hooks';
 const YEAR = 2024;
 const DAY = 1;
 
-// solution path: /Users/hank/projects/advent-of-code-1/years/2024/01/index.ts
-// data path    : /Users/hank/projects/advent-of-code-1/years/2024/01/data.txt
-// problem url  : https://adventofcode.com/2024/day/1
-
-async function p2024day1_part1(input: string, ...params: any[]) {
+const getColumns = (input: string) => {
   const rows = getRows(input);
-  const columns = rows.reduce(
+  return rows.reduce(
     (acc: { a: number[]; b: number[] }, row) => {
       const [a, b] = row.split(/\s+/);
       acc['a'].push(Number(a));
@@ -26,6 +22,13 @@ async function p2024day1_part1(input: string, ...params: any[]) {
     },
     { a: [], b: [] },
   );
+};
+// solution path: /Users/hank/projects/advent-of-code-1/years/2024/01/index.ts
+// data path    : /Users/hank/projects/advent-of-code-1/years/2024/01/data.txt
+// problem url  : https://adventofcode.com/2024/day/1
+
+async function p2024day1_part1(input: string, ...params: any[]) {
+  const columns = getColumns(input);
   return columns['a'].reduce((acc, num, i) => {
     acc += Math.abs(num - columns['b'][i]);
     return acc;
@@ -33,7 +36,24 @@ async function p2024day1_part1(input: string, ...params: any[]) {
 }
 
 async function p2024day1_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const columns = getColumns(input);
+  return columns['a'].reduce((prod, a) => {
+    let count = 0;
+    columns['b'].some((b) => {
+      if (b < a) {
+        return false;
+      }
+      if (a === b) {
+        count += 1;
+        return false;
+      }
+      if (b > a) {
+        return true;
+      }
+    });
+    prod += a * count;
+    return prod;
+  }, 0);
 }
 
 async function run() {
@@ -48,7 +68,17 @@ async function run() {
       expected: '11',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `3   4
+4   3
+2   5
+1   3
+3   9
+3   3`,
+      expected: '31',
+    },
+  ];
 
   // Run tests
   test.beginTests();
