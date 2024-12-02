@@ -13,29 +13,46 @@ const DAY = 2;
 // data path    : /Users/hank/projects/advent-of-code-1/years/2024/02/data.txt
 // problem url  : https://adventofcode.com/2024/day/2
 
+const checkSafe = (row: number[]) => {
+  let dir = row[0] < row[1] ? 1 : -1;
+  return row.every((num, i) => {
+    if (i === 0) {
+      return true;
+    }
+    const diff = Math.abs(num - row[i - 1]);
+    if (diff === 0 || (dir < 0 && num > row[i - 1]) || (dir > 0 && num < row[i - 1]) || diff < 1 || diff > 3) {
+      return false;
+    }
+    return true;
+  });
+};
+
 async function p2024day2_part1(input: string, ...params: any[]) {
   const rows = getRows(input).map((row) => row.split(' ').map(Number));
 
   return rows.reduce((acc, row) => {
-    let dir = row[0] < row[1] ? 1 : -1;
-    const safe = row.every((num, i) => {
-      if (i === 0) {
-        return true;
-      }
-      const diff = Math.abs(num - row[i - 1]);
-      if (diff === 0 || (dir < 0 && num > row[i - 1]) || (dir > 0 && num < row[i - 1]) || diff < 1 || diff > 3) {
-        return false;
-      }
-      return true;
-    });
-
-    acc += safe ? 1 : 0;
+    acc += checkSafe(row) ? 1 : 0;
     return acc;
   }, 0);
 }
 
 async function p2024day2_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const rows = getRows(input).map((row) => row.split(' ').map(Number));
+
+  return rows.reduce((acc, row) => {
+    let safe = checkSafe(row);
+
+    if (!safe) {
+      safe = row.some((_, i) => {
+        const rowCopy = [...row];
+        rowCopy.splice(i, 1);
+        return checkSafe(rowCopy);
+      });
+    }
+
+    acc += safe ? 1 : 0;
+    return acc;
+  }, 0);
 }
 
 async function run() {
@@ -50,7 +67,17 @@ async function run() {
       expected: '2',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9`,
+      expected: '4',
+    },
+  ];
 
   // Run tests
   test.beginTests();
