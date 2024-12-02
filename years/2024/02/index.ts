@@ -44,9 +44,7 @@ async function p2024day2_part2(input: string, ...params: any[]) {
 
     if (!safe) {
       safe = row.some((_, i) => {
-        const rowCopy = [...row];
-        rowCopy.splice(i, 1);
-        return checkSafe(rowCopy);
+        return checkSafe(row.toSpliced(i, 1));
       });
     }
 
