@@ -59,7 +59,36 @@ async function p2024day8_part1(input: string, ...params: any[]) {
 }
 
 async function p2024day8_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const grid = getRows(input).map((row) => row.split(''));
+  const antinodes: Record<string, boolean> = {};
+  grid.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      if (cell !== '.') {
+        const matchingCells = findMatchingCells(grid, cell, y, x);
+        antinodes[`${x},${y}`] = true;
+        matchingCells.forEach((matchingCell) => {
+          const dx = matchingCell.x - x;
+          const dy = matchingCell.y - y;
+          let newY = y - dy;
+          let newX = x - dx;
+          while (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length) {
+            antinodes[`${newX},${newY}`] = true;
+            newY = newY - dy;
+            newX = newX - dx;
+          }
+          newY = matchingCell.y + dy;
+          newX = matchingCell.x + dx;
+          while (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length) {
+            antinodes[`${newX},${newY}`] = true;
+            newY = newY + dy;
+            newX = newX + dx;
+          }
+        });
+      }
+    });
+  });
+
+  return Object.keys(antinodes).length;
 }
 
 async function run() {
@@ -80,7 +109,36 @@ async function run() {
       expected: '14',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `T.........
+...T......
+.T........
+..........
+..........
+..........
+..........
+..........
+..........
+..........`,
+      expected: '9',
+    },
+    {
+      input: `............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............`,
+      expected: '34',
+    },
+  ];
 
   // Run tests
   test.beginTests();
