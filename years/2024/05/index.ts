@@ -4,6 +4,7 @@ import * as test from '../../../util/test';
 import chalk from 'chalk';
 import { log, logSolution, trace } from '../../../util/log';
 import { performance } from 'perf_hooks';
+import { getRows } from '../../../util/input';
 
 const YEAR = 2024;
 const DAY = 5;
@@ -12,42 +13,61 @@ const DAY = 5;
 // data path    : /Users/hank/projects/advent-of-code-1/years/2024/05/data.txt
 // problem url  : https://adventofcode.com/2024/day/5
 
-async function p2024day5_part1(input: string, ...params: any[]) {
-  const [rulesString, pagesString] = input.split('\n\n').map((x) => x.split('\n'));
-  const rules = rulesString.map((rule) => rule.split('|').map(Number));
-  const pagesSet = pagesString.map((pages) => pages.split(',').map(Number));
-  const beforeOrder: Record<number, number[]> = {};
-  const afterOrder: Record<number, number[]> = {};
-  rules.forEach(([a, b]) => {
-    beforeOrder[a] = beforeOrder[a] ? [...beforeOrder[a], b] : [b];
-    afterOrder[b] = afterOrder[b] ? [...afterOrder[b], a] : [a];
+const getRulesAndUpdates = (input: string) => {
+  const rows = getRows(input);
+  const rules: Record<number, number[]> = {};
+  const updates: number[][] = [];
+  rows.forEach((row) => {
+    if (row.includes('|')) {
+      const [prevPage, page] = row.split('|').map(Number);
+      rules[page] = rules[page] ? [...rules[page], prevPage] : [prevPage];
+    } else if (row) {
+      updates.push(row.split(',').map(Number));
+    }
   });
-  return pagesSet.reduce((acc, pages) => {
-    let pass = pages.every((page, i) => {
-      let pass = true;
-      if (i < pages.length - 1 && afterOrder[page]) {
-        pass = pages.slice(i + 1).every((p) => {
-          return !afterOrder[page].includes(p);
-        });
-      }
 
-      if (i > 0 && beforeOrder[page]) {
-        pass = pages.slice(0, i - 1).every((p) => {
-          return !beforeOrder[page].includes(p);
-        });
-      }
+  return { rules, updates };
+};
 
-      return pass;
-    });
-    if (pass) {
-      acc += pages[Math.floor(pages.length / 2)];
+const isValidUpdate = (update: number[], rules: Record<number, number[]>) =>
+  update.every((page) => (rules[page] ?? []).every((prevPage) => update.indexOf(prevPage) <= update.indexOf(page)));
+
+const findRightPlace = (pages: number[], page: number, rules: Record<number, number[]>) => {
+  const prevIndices = (rules[page] ?? []).map((p) => pages.indexOf(p));
+  const targetIndex = Math.max(...prevIndices);
+  return targetIndex > pages.indexOf(page) ? pages[targetIndex] : 0;
+};
+
+const movePage = (pages: number[], page: number, targetPage: number) => {
+  pages.splice(pages.indexOf(page), 1);
+  pages.splice(pages.indexOf(targetPage) + 1, 0, page);
+};
+
+async function p2024day5_part1(input: string, ...params: any[]) {
+  const { rules, updates } = getRulesAndUpdates(input);
+  return updates.reduce((acc, update) => {
+    if (isValidUpdate(update, rules)) {
+      acc += update[Math.floor(update.length / 2)];
     }
     return acc;
   }, 0);
 }
 
 async function p2024day5_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const { rules, updates } = getRulesAndUpdates(input);
+
+  return updates.reduce((acc, update) => {
+    if (!isValidUpdate(update, rules)) {
+      [...update].forEach((page) => {
+        const targetPage = findRightPlace(update, page, rules);
+        if (targetPage) {
+          movePage(update, page, targetPage);
+        }
+      });
+      acc += update[Math.floor(update.length / 2)];
+    }
+    return acc;
+  }, 0);
 }
 
 async function run() {
@@ -84,7 +104,39 @@ async function run() {
       expected: '143',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `47|53
+97|13
+97|61
+97|47
+75|29
+61|13
+75|53
+29|13
+97|29
+53|29
+61|53
+97|53
+61|29
+47|13
+75|47
+97|75
+47|61
+75|61
+47|29
+75|13
+53|13
+
+75,47,61,53,29
+97,61,53,29,13
+75,29,13
+75,97,47,61,53
+61,13,29
+97,13,75,29,47`,
+      expected: '123',
+    },
+  ];
 
   // Run tests
   test.beginTests();
