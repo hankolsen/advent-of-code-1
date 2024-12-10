@@ -64,8 +64,34 @@ async function p2024day10_part1(input: string, ...params: any[]) {
   return startPoints.reduce((count, [row, col]) => count + findPaths(grid, row, col), 0);
 }
 
+const countUniquePaths = (grid: number[][], row: number, col: number, cache: (number | null)[][]): number => {
+  if (grid[row][col] === 9) {
+    cache[row][col] = 1;
+  }
+
+  if (cache[row][col] !== null) {
+    return cache[row][col];
+  }
+
+  cache[row][col] = dirs
+    .map(([dx, dy]) => [row + dx, col + dy])
+    .filter(
+      ([nextRow, nextCol]) => validNextCell(grid, nextRow, nextCol) && grid[nextRow][nextCol] === grid[row][col] + 1,
+    )
+    .reduce((acc, [nextRow, nextCol]) => acc + countUniquePaths(grid, nextRow, nextCol, cache), 0);
+
+  return cache[row][col];
+};
+
 async function p2024day10_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const grid = input
+    .trim()
+    .split('\n')
+    .map((line) => line.split('').map(Number));
+
+  const startPoints = getStartPoints(grid);
+  const cache = grid.map((row) => row.map(() => null));
+  return startPoints.reduce((acc, [row, col]) => acc + countUniquePaths(grid, row, col, cache), 0);
 }
 
 async function run() {
@@ -82,7 +108,19 @@ async function run() {
       expected: '36',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732`,
+      expected: '81',
+    },
+  ];
 
   // Run tests
   test.beginTests();
