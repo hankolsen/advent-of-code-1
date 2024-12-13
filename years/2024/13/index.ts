@@ -30,8 +30,43 @@ async function p2024day13_part1(input: string, ...params: any[]) {
   }, 0);
 }
 
+type Machine = { ax: number, ay: number, bx: number, by: number, px: number, py: number }
+
+// ax * ta + bx * tb = px
+// ay * ta + by * tb = px
+// =>
+// ta = (px - bx * tb) / ax, where ax !== 0
+// ta = (px - by * tb) / ay, where ay !== 0
+// =>
+// (px - bx * tb) / ax = (py - by * tb) / ay, where ax !== 0, ay !== 0
+// =>
+// ay * (px - bx * tb) = ax * (px - by * tb)
+// =>
+// ay * px - ay * bx * tb = ax * py - ax * by * tb
+// ay * px - ax * py = ay * bx * tb - ax * by * tb
+// =>
+// tb = (ay * px - ax * py) / (ay * bx - ax * by), where ay !== 0, bx !== 0, ax !== 0, by != 0
+const minTokensToWin = ({ ax, ay, bx, by, px, py }: Machine) => {
+  if ([ax, ay, bx, by].some((v) => v === 0)) {
+    return null;
+  }
+  const tb = Math.floor((ay * px - ax * py) / (ay * bx - ax * by));
+  const ta = Math.floor((px - bx * tb) / ax);
+  return ax * ta + bx * tb === px && ay * ta + by * tb === py ? { ta, tb } : null;
+};
+
+const minCostToWin = (machine: Machine) => {
+  const tokens = minTokensToWin(machine);
+  return tokens ? tokens.ta * 3 + tokens.tb : 0;
+}
+
 async function p2024day13_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const machines = input.split('\n\n').map((machine) => {
+    const [, ax, ay, bx, by, px, py] =
+      machine.match(/Button A: X\+(\d+), Y\+(\d+)\nButton B: X\+(\d+), Y\+(\d+)\nPrize: X=(\d+), Y=(\d+)/) ?? [];
+    return { ax: Number(ax), ay: Number(ay), bx: Number(bx), by: Number(by), px: Number(px) + 10000000000000, py: Number(py) + 10000000000000 };
+  });
+  return machines.reduce((total, machine) => total + minCostToWin(machine), 0);
 }
 
 async function run() {
@@ -55,7 +90,27 @@ Prize: X=18641, Y=10279`,
       expected: '480',
     },
   ];
-  const part2tests: TestCase[] = [];
+  const part2tests: TestCase[] = [
+    {
+      input: `Button A: X+94, Y+34
+Button B: X+22, Y+67
+Prize: X=8400, Y=5400
+
+Button A: X+26, Y+66
+Button B: X+67, Y+21
+Prize: X=12748, Y=12176
+
+Button A: X+17, Y+86
+Button B: X+84, Y+37
+Prize: X=7870, Y=6450
+
+Button A: X+69, Y+23
+Button B: X+27, Y+71
+Prize: X=18641, Y=10279`,
+      expected: '480',
+    },
+
+  ];
 
   // Run tests
   test.beginTests();
