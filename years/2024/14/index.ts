@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { uniq } from 'lodash';
 import * as util from '../../../util/util';
 import * as test from '../../../util/test';
 import chalk from 'chalk';
@@ -44,6 +44,7 @@ async function p2024day14_part1(input: string, ...params: any[]) {
     [0, Math.floor(height / 2) + 1, Math.floor(width / 2) - 1, height - 1],
     [Math.ceil(width / 2), Math.ceil(height / 2), width - 1, height - 1],
   ];
+
   return quadrants.reduce((acc, [x1, y1, x2, y2], i) => {
     let count = 0;
     robots.forEach(({ x, y }) => {
@@ -56,7 +57,35 @@ async function p2024day14_part1(input: string, ...params: any[]) {
 }
 
 async function p2024day14_part2(input: string, ...params: any[]) {
-  return 'Not implemented';
+  const rows = getRows(input);
+  const robots = rows.reduce((acc: { x: number; y: number; dx: number; dy: number }[], row) => {
+    const [, x, y, dx, dy] = row.match(/p=(\d+),(\d+) v=(-?\d+),(-?\d+)/) ?? [];
+    acc.push({ x: Number(x), y: Number(y), dx: Number(dx), dy: Number(dy) });
+    return acc;
+  }, []);
+  const width = 101;
+  const height = 103;
+  for (let i = 0; i < 10000; i += 1) {
+    const uniquePositions = new Set<string>();
+    robots.forEach(({ x, y, dx, dy }, j) => {
+      x += dx;
+      x = x % width;
+      if (x < 0) {
+        x = width + x;
+      }
+      y += dy;
+      y = y % height;
+      if (y < 0) {
+        y = height + y;
+      }
+      robots[j] = { x, y, dx, dy };
+      uniquePositions.add(`${x},${y}`);
+    });
+
+    if (uniquePositions.size === robots.length) {
+      return i + 1;
+    }
+  }
 }
 
 async function run() {
